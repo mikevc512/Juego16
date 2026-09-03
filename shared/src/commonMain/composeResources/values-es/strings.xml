@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">Juego 16</string>
+    <string name="tab_home">Inicio</string>
+    <string name="tab_game">Juego</string>
+    <string name="your_stats">Tus estadísticas</string>
+    <string name="games_completed">%1$d partidas completadas</string>
+    <string name="continue_game">Continuar %1$s · %2$s</string>
+    <string name="continue_game_paused">En pausa</string>
+    <string name="new_game">Nueva partida</string>
+    <string name="new">Nueva</string>
+    <string name="play">Jugar</string>
+    <string name="stat_completed">Completadas</string>
+    <string name="stat_best_time">Mejor tiempo</string>
+    <string name="stat_average">Promedio</string>
+    <string name="recent_times">Tiempos reciente: %1$s</string>
+    <string name="empty_value">—</string>
+    <string name="difficulty_easy">Fácil</string>
+    <string name="difficulty_medium">Media</string>
+    <string name="difficulty_hard">Difícil</string>
+    <string name="tiles_given">Recibirás %1$d casillas</string>
+    <string name="easier_puzzles_hint">Los puzzles más fáciles revelan más números iniciales</string>
+    <string name="elapsed_time">%1$s  · Tiempo transcurrido: %2$s</string>
+    <string name="elapsed_time_paused">%1$s  · Tiempo transcurrido: %2$s  ·  En pausa</string>
+    <string name="action_end">Terminar</string>
+    <string name="action_undo">Deshacer</string>
+    <string name="action_erase">Borrar</string>
+    <string name="action_check">Comprobar</string>
+    <string name="action_reset">Reiniciar</string>
+    <string name="action_pause">Pausar</string>
+    <string name="action_resume">Reanudar</string>
+    <string name="puzzle_solved_title">¡Enhorabuena! Puzzle resuelto</string>
+    <string name="puzzle_unsolved_title">Parece que algo no cuadra</string>
+    <string name="puzzle_solved_message">Completaste del 1 al 16 para que cada fila y columna coincida con su suma en %1$s.</string>
+    <string name="puzzle_unsolved_message">Parece que hay errores en el puzzle. Asegúrate de que todos los números estén en verde antes de comprobar.</string>
+    <string name="new_puzzle">Nuevo puzzle</string>
+    <string name="back_to_board">Volver al tablero</string>
+    <string name="end_game_title">¿Seguro que quieres terminar la partida?</string>
+    <string name="end_game_message">Si terminas la partida perderás todos los datos y no contará en las estadísticas.</string>
+</resources>

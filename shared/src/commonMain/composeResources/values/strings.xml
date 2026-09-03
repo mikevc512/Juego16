@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">Juego 16</string>
+    <string name="tab_home">Home</string>
+    <string name="tab_game">Game</string>
+    <string name="your_stats">Your stats</string>
+    <string name="games_completed">%1$d games completed</string>
+    <string name="continue_game">Continue %1$s · %2$s</string>
+    <string name="continue_game_paused">Paused</string>
+    <string name="new_game">New game</string>
+    <string name="new">New</string>
+    <string name="play">Play</string>
+    <string name="stat_completed">Completed</string>
+    <string name="stat_best_time">Best time</string>
+    <string name="stat_average">Average</string>
+    <string name="recent_times">Recent time: %1$s</string>
+    <string name="empty_value">—</string>
+    <string name="difficulty_easy">Easy</string>
+    <string name="difficulty_medium">Medium</string>
+    <string name="difficulty_hard">Hard</string>
+    <string name="tiles_given">You will be given %1$d tiles</string>
+    <string name="easier_puzzles_hint">Easier puzzles reveal more starting numbers</string>
+    <string name="elapsed_time">%1$s · Elapsed Time: %2$s</string>
+    <string name="elapsed_time_paused">%1$s · Elapsed Time: %2$s </string>
+    <string name="action_end">End</string>
+    <string name="action_undo">Undo</string>
+    <string name="action_erase">Erase</string>
+    <string name="action_check">Check</string>
+    <string name="action_reset">Reset</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_resume">Resume</string>
+    <string name="puzzle_solved_title">Congrats! Puzzle solved</string>
+    <string name="puzzle_unsolved_title">Hmm Something Looks Off</string>
+    <string name="puzzle_solved_message">You filled 1–16 so every row and column matches its sum in %1$s.</string>
+    <string name="puzzle_unsolved_message">There seems to be some issues with the puzzle. Make sure all the numbers are green before checking.</string>
+    <string name="new_puzzle">New puzzle</string>
+    <string name="back_to_board">Back to board</string>
+    <string name="end_game_title">Are you sure you would like to end game?</string>
+    <string name="end_game_message">By ending the game you will lose all data and won't be contributed to stats.</string>
+</resources>

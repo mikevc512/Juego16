@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Juego 16 — Play assets</title>
+<style>
+  :root{
+    --paper:#F3E6C9;
+    --cream:#FFF8EA;
+    --given:#E8D7B5;
+    --selected:#F0D48A;
+    --ink:#2A2118;
+    --grid:#3A2F24;
+    --teal:#1C5854;
+    --tealsoft:#D7E6E3;
+    --coral:#C45C4A;
+    --green:#2E7D57;
+    --error:#B3261E;
+    --muted:#7A6A58;
+    --onprimary:#FFFBF3;
+    --sans:-apple-system,"Helvetica Neue",Arial,sans-serif;
+    --serif:Georgia,"Times New Roman",serif;
+    --mono:Menlo,Monaco,"Courier New",monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#222;font-family:var(--sans);}
+
+  /* Each capture target is exactly 1080x1920; inner phone is authored in dp (400x711) and scaled 2.7x */
+  .screen{width:1080px;height:1920px;overflow:hidden;position:relative;background:var(--paper);margin:24px auto;}
+  .phone{width:400px;height:711px;transform:scale(2.7);transform-origin:top left;position:relative;overflow:hidden;background:var(--paper);}
+
+  /* capture mode: url hash selects a single target pinned to the top-left corner */
+  body.solo{background:var(--paper);}
+  body.solo .capture{display:none;margin:0;}
+  body.solo .capture.active{display:block;}
+  body.solo .fg.active{display:flex;}
+
+  .content{position:absolute;inset:0 0 110px 0;overflow:hidden;}
+  .pad{padding:24px 20px;}
+
+  /* bottom navigation bar */
+  .nav{position:absolute;left:0;right:0;bottom:0;height:110px;background:var(--cream);
+       display:flex;align-items:flex-start;justify-content:space-around;padding-top:14px;}
+  .navitem{display:flex;flex-direction:column;align-items:center;gap:4px;width:90px;}
+  .navitem svg{width:24px;height:24px;}
+  .navitem span{font-size:12px;font-weight:500;}
+  .nav-on{color:var(--coral);fill:var(--coral);}
+  .nav-off{color:var(--green);fill:var(--green);}
+
+  .logo{display:block;margin:16px auto 0;height:80px;object-fit:contain;}
+  .logo-lg{height:100px;}
+
+  h1.stats{font-size:32px;font-weight:700;letter-spacing:1.2px;color:var(--ink);text-align:center;}
+  .completed{font-size:18px;font-weight:600;color:var(--teal);text-align:center;margin-top:8px;}
+
+  .card{background:var(--cream);border-radius:16px;padding:12px 16px;margin-top:8px;}
+  .card h2{font-size:18px;font-weight:600;color:var(--ink);}
+  .card h2.big{font-size:22px;font-weight:700;}
+  .row{display:flex;justify-content:space-between;font-size:16px;margin-top:4px;}
+  .row .k{color:var(--muted);}
+  .row .v{color:var(--ink);}
+  .recent{font-size:16px;color:var(--muted);margin-top:8px;}
+  .tiles{font-size:16px;color:var(--muted);margin-top:8px;}
+
+  .btn{display:flex;align-items:center;justify-content:center;height:40px;border-radius:12px;
+       font-size:15px;font-weight:600;}
+  .btn-filled{background:var(--teal);color:var(--onprimary);}
+  .btn-outline{background:transparent;color:var(--teal);border:1px solid rgba(28,88,84,.5);}
+  .mt8{margin-top:8px;}
+  .mt16{margin-top:16px;}
+  .mt20{margin-top:20px;}
+
+  /* game header */
+  .gh{padding:16px 8px 0;text-align:center;}
+  .gh .title{font-size:18px;font-weight:600;color:var(--ink);padding-bottom:8px;}
+  .gh .meta{font-size:14px;font-weight:600;color:var(--teal);font-family:var(--mono);}
+
+  /* board */
+  .board-wrap{display:flex;flex-direction:column;align-items:center;padding-top:24px;padding-right:32px;}
+  .board-top{display:flex;align-items:center;padding-right:24px;}
+  .board-mid{display:flex;align-items:center;}
+  .cellbox{width:64px;height:64px;display:flex;align-items:center;justify-content:center;}
+  .sum{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+       color:#fff;font-family:var(--serif);font-weight:700;font-size:17px;
+       border:2px solid rgba(255,255,255,.55);box-shadow:0 1px 3px rgba(0,0,0,.35);}
+  .sum.coral{background:var(--coral);}
+  .sum.green{background:var(--green);}
+  .grid{border:3px solid var(--grid);border-radius:10px;overflow:hidden;background:var(--cream);
+        box-shadow:0 3px 6px rgba(0,0,0,.28);}
+  .grow{display:flex;}
+  .cell{width:64px;height:64px;border:1px solid rgba(58,47,36,.55);display:flex;align-items:center;
+        justify-content:center;font-family:var(--serif);font-size:24px;background:var(--cream);}
+  .cell.given{background:var(--given);color:var(--ink);font-weight:700;}
+  .cell.user{color:var(--teal);font-weight:600;}
+  .cell.sel{background:var(--selected);}
+
+  /* number pad */
+  .pad-rows{display:flex;flex-direction:column;gap:8px;padding:0 16px;}
+  .pad-row{display:flex;gap:8px;}
+  .key{flex:1;height:48px;border-radius:10px;background:var(--cream);border:1px solid rgba(58,47,36,.35);
+       display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:18px;
+       font-weight:600;color:var(--ink);}
+  .key.used{background:var(--tealsoft);color:rgba(28,88,84,.55);}
+
+  /* action row */
+  .actions{display:flex;flex-direction:column;gap:8px;padding:0 16px;}
+  .arow{display:flex;gap:8px;}
+  .abtn{flex:1;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+        font-size:14px;font-weight:600;}
+  .abtn.filled{background:var(--teal);color:var(--onprimary);}
+  .abtn.outline{background:transparent;color:var(--teal);border:1px solid rgba(28,88,84,.5);}
+  .abtn.disabled{color:rgba(42,33,24,.38);border-color:rgba(42,33,24,.18);}
+
+  /* dialog */
+  .scrim{position:absolute;inset:0;background:rgba(0,0,0,.06);z-index:30;}
+  .dialog{position:absolute;left:28px;right:28px;top:60%;transform:translateY(-50%);z-index:40;
+          background:var(--cream);border-radius:28px;padding:24px;box-shadow:0 8px 24px rgba(0,0,0,.35);}
+  .dialog h3{font-size:22px;font-weight:600;color:var(--ink);}
+  .dialog p{font-size:15px;color:var(--muted);margin-top:16px;line-height:1.45;}
+  .dialog .acts{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:24px;}
+  .dialog .text-btn{color:var(--teal);font-size:15px;font-weight:600;padding:8px 12px;}
+  .dialog .fill-btn{background:var(--teal);color:var(--onprimary);font-size:15px;font-weight:600;
+                    padding:10px 20px;border-radius:20px;}
+
+  .confetti{position:absolute;inset:0;pointer-events:none;z-index:35;}
+  .confetti i{position:absolute;width:7px;height:12px;border-radius:2px;display:block;}
+
+  /* 1024x500 Play feature graphic */
+  .fg{width:1024px;height:500px;overflow:hidden;position:relative;margin:24px auto;
+      background:linear-gradient(135deg,#F8EFDA 0%,#F3E6C9 55%,#EBDCB8 100%);display:flex;align-items:center;}
+  .fg .blob{position:absolute;border-radius:50%;}
+  .fg .b1{width:420px;height:420px;left:-140px;top:-160px;background:rgba(28,88,84,.07);}
+  .fg .b2{width:300px;height:300px;right:-90px;bottom:-130px;background:rgba(196,92,74,.09);}
+  .fg .left{position:relative;z-index:2;padding-left:64px;width:600px;}
+  .fg .left img{height:92px;display:block;}
+  .fg .tag{font-size:34px;font-weight:700;color:var(--ink);margin-top:22px;line-height:1.25;}
+  .fg .sub{font-size:21px;color:var(--muted);margin-top:14px;line-height:1.4;}
+  .fg .pills{display:flex;gap:10px;margin-top:26px;}
+  .fg .pill{font-size:17px;font-weight:600;padding:9px 20px;border-radius:999px;
+            background:rgba(28,88,84,.10);color:var(--teal);}
+  .fg .right{position:relative;z-index:2;flex:1;display:flex;justify-content:center;align-items:center;}
+  .fg .tilt{transform:rotate(-5deg);}
+  .fg .fgcell{width:58px;height:58px;display:flex;align-items:center;justify-content:center;}
+  .fg .fgsum{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+             color:#fff;font-family:var(--serif);font-weight:700;font-size:16px;
+             border:2px solid rgba(255,255,255,.55);box-shadow:0 2px 5px rgba(0,0,0,.28);}
+  .fg .fggrid{border:3px solid var(--grid);border-radius:10px;overflow:hidden;background:var(--cream);
+              box-shadow:0 10px 22px rgba(42,33,24,.28);}
+  .fg .fgtile{width:58px;height:58px;border:1px solid rgba(58,47,36,.55);display:flex;align-items:center;
+              justify-content:center;font-family:var(--serif);font-size:23px;background:var(--cream);
+              color:var(--teal);font-weight:600;}
+  .fg .fgtile.given{background:var(--given);color:var(--ink);font-weight:700;}
+</style>
+</head>
+<body>
+
+<!-- ============ 1. HOME / STATS ============ -->
+<div class="screen capture" id="s1"><div class="phone">
+  <div class="content">
+    <div class="pad" style="padding:12px 20px;">
+      <img class="logo" src="../../androidApp/src/main/res/drawable/juego16_header.png" alt="" style="height:56px;margin-top:8px;">
+      <h1 class="stats">Your stats</h1>
+      <div class="completed">18 games completed</div>
+
+      <div class="card mt16">
+        <h2>Easy</h2>
+        <div class="row"><span class="k">Completed</span><span class="v">9</span></div>
+        <div class="row"><span class="k">Best time</span><span class="v">1:42</span></div>
+        <div class="row"><span class="k">Average</span><span class="v">2:35</span></div>
+      </div>
+
+      <div class="card">
+        <h2>Medium</h2>
+        <div class="row"><span class="k">Completed</span><span class="v">6</span></div>
+        <div class="row"><span class="k">Best time</span><span class="v">3:18</span></div>
+        <div class="row"><span class="k">Average</span><span class="v">4:26</span></div>
+      </div>
+
+      <div class="card">
+        <h2>Hard</h2>
+        <div class="row"><span class="k">Completed</span><span class="v">3</span></div>
+        <div class="row"><span class="k">Best time</span><span class="v">6:07</span></div>
+        <div class="row"><span class="k">Average</span><span class="v">7:41</span></div>
+      </div>
+
+      <div class="btn btn-filled mt16">Continue Easy · 1:12</div>
+      <div class="btn btn-outline mt8">New game</div>
+    </div>
+  </div>
+  <div class="nav">
+    <div class="navitem nav-on">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>Home</span>
+    </div>
+    <div class="navitem nav-off">
+      <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg><span>Game</span>
+    </div>
+  </div>
+</div></div>
+
+<!-- ============ 2. DIFFICULTY SELECT ============ -->
+<div class="screen capture" id="s2"><div class="phone">
+  <div class="content">
+    <div class="pad" style="display:flex;flex-direction:column;justify-content:center;height:100%;">
+      <img class="logo logo-lg" src="../../androidApp/src/main/res/drawable/juego16_header.png" alt="">
+      <div class="card" style="margin-top:20px;">
+        <h2 class="big">Easy</h2>
+        <div class="tiles">You will be given 6 tiles</div>
+      </div>
+      <div class="card" style="margin-top:20px;">
+        <h2 class="big">Medium</h2>
+        <div class="tiles">You will be given 5 tiles</div>
+      </div>
+      <div class="card" style="margin-top:20px;">
+        <h2 class="big">Hard</h2>
+        <div class="tiles">You will be given 4 tiles</div>
+      </div>
+    </div>
+  </div>
+  <div class="nav">
+    <div class="navitem nav-off">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>Home</span>
+    </div>
+    <div class="navitem nav-on">
+      <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg><span>Game</span>
+    </div>
+  </div>
+</div></div>
+
+<!-- ============ 3. BOARD MID-GAME ============ -->
+<div class="screen capture" id="s3"><div class="phone">
+  <div class="content">
+    <div style="padding:32px 16px 12px;">
+      <div class="gh">
+        <div class="title">Juego 16</div>
+        <div class="meta">Easy  · Elapsed Time: 1:12</div>
+      </div>
+
+      <div class="board-wrap">
+        <div class="board-top">
+          <div class="cellbox"></div>
+          <div class="cellbox"><div class="sum coral">38</div></div>
+          <div class="cellbox"><div class="sum coral">36</div></div>
+          <div class="cellbox"><div class="sum coral">34</div></div>
+          <div class="cellbox"><div class="sum coral">28</div></div>
+        </div>
+        <div class="board-mid">
+          <div>
+            <div class="cellbox"><div class="sum green">20</div></div>
+            <div class="cellbox"><div class="sum coral">25</div></div>
+            <div class="cellbox"><div class="sum green">40</div></div>
+            <div class="cellbox"><div class="sum coral">51</div></div>
+          </div>
+          <div class="grid">
+            <div class="grow">
+              <div class="cell user">11</div><div class="cell given">6</div>
+              <div class="cell given">1</div><div class="cell user">2</div>
+            </div>
+            <div class="grow">
+              <div class="cell user">10</div><div class="cell sel"></div>
+              <div class="cell"></div><div class="cell"></div>
+            </div>
+            <div class="grow">
+              <div class="cell given">4</div><div class="cell given">16</div>
+              <div class="cell given">12</div><div class="cell given">8</div>
+            </div>
+            <div class="grow">
+              <div class="cell"></div><div class="cell"></div>
+              <div class="cell"></div><div class="cell"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:20px;"></div>
+      <div class="pad-rows">
+        <div class="pad-row">
+          <div class="key used">1</div><div class="key used">2</div><div class="key">3</div>
+          <div class="key used">4</div><div class="key">5</div><div class="key used">6</div>
+          <div class="key">7</div><div class="key used">8</div>
+        </div>
+        <div class="pad-row">
+          <div class="key">9</div><div class="key used">10</div><div class="key used">11</div>
+          <div class="key used">12</div><div class="key">13</div><div class="key">14</div>
+          <div class="key">15</div><div class="key used">16</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nav">
+    <div class="navitem nav-off">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>Home</span>
+    </div>
+    <div class="navitem nav-on">
+      <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg><span>Game</span>
+    </div>
+  </div>
+</div></div>
+
+<!-- ============ 4. CONTROLS (scrolled) ============ -->
+<div class="screen capture" id="s4"><div class="phone">
+  <div class="content">
+    <div style="padding:24px 16px 12px;">
+      <div class="board-wrap" style="padding-top:0;">
+        <div class="board-top">
+          <div class="cellbox"></div>
+          <div class="cellbox"><div class="sum coral">38</div></div>
+          <div class="cellbox"><div class="sum coral">36</div></div>
+          <div class="cellbox"><div class="sum coral">34</div></div>
+          <div class="cellbox"><div class="sum coral">28</div></div>
+        </div>
+        <div class="board-mid">
+          <div>
+            <div class="cellbox"><div class="sum green">20</div></div>
+            <div class="cellbox"><div class="sum coral">25</div></div>
+            <div class="cellbox"><div class="sum green">40</div></div>
+            <div class="cellbox"><div class="sum coral">51</div></div>
+          </div>
+          <div class="grid">
+            <div class="grow">
+              <div class="cell user">11</div><div class="cell given">6</div>
+              <div class="cell given">1</div><div class="cell user">2</div>
+            </div>
+            <div class="grow">
+              <div class="cell user">10</div><div class="cell sel user">5</div>
+              <div class="cell"></div><div class="cell"></div>
+            </div>
+            <div class="grow">
+              <div class="cell given">4</div><div class="cell given">16</div>
+              <div class="cell given">12</div><div class="cell given">8</div>
+            </div>
+            <div class="grow">
+              <div class="cell user">13</div><div class="cell"></div>
+              <div class="cell"></div><div class="cell"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:20px;"></div>
+      <div class="pad-rows">
+        <div class="pad-row">
+          <div class="key used">1</div><div class="key used">2</div><div class="key">3</div>
+          <div class="key used">4</div><div class="key used">5</div><div class="key used">6</div>
+          <div class="key">7</div><div class="key used">8</div>
+        </div>
+        <div class="pad-row">
+          <div class="key">9</div><div class="key used">10</div><div class="key used">11</div>
+          <div class="key used">12</div><div class="key used">13</div><div class="key">14</div>
+          <div class="key">15</div><div class="key used">16</div>
+        </div>
+      </div>
+
+      <div style="height:16px;"></div>
+      <div class="actions">
+        <div class="arow">
+          <div class="abtn filled">End</div>
+          <div class="abtn outline">Undo</div>
+          <div class="abtn outline">Erase</div>
+        </div>
+        <div class="arow">
+          <div class="abtn outline disabled">Check</div>
+          <div class="abtn outline">Reset</div>
+          <div class="abtn filled">Pause</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nav">
+    <div class="navitem nav-off">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>Home</span>
+    </div>
+    <div class="navitem nav-on">
+      <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg><span>Game</span>
+    </div>
+  </div>
+</div></div>
+
+<!-- ============ 5. SOLVED ============ -->
+<div class="screen capture" id="s5"><div class="phone">
+  <div class="content">
+    <div style="padding:32px 16px 12px;">
+      <div class="gh">
+        <div class="title">Juego 16</div>
+        <div class="meta">Easy  · Elapsed Time: 2:08</div>
+      </div>
+      <div class="board-wrap">
+        <div class="board-top">
+          <div class="cellbox"></div>
+          <div class="cellbox"><div class="sum green">38</div></div>
+          <div class="cellbox"><div class="sum green">36</div></div>
+          <div class="cellbox"><div class="sum green">34</div></div>
+          <div class="cellbox"><div class="sum green">28</div></div>
+        </div>
+        <div class="board-mid">
+          <div>
+            <div class="cellbox"><div class="sum green">20</div></div>
+            <div class="cellbox"><div class="sum green">25</div></div>
+            <div class="cellbox"><div class="sum green">40</div></div>
+            <div class="cellbox"><div class="sum green">51</div></div>
+          </div>
+          <div class="grid">
+            <div class="grow">
+              <div class="cell user">11</div><div class="cell given">6</div>
+              <div class="cell given">1</div><div class="cell user">2</div>
+            </div>
+            <div class="grow">
+              <div class="cell user">10</div><div class="cell user">5</div>
+              <div class="cell user">7</div><div class="cell user">3</div>
+            </div>
+            <div class="grow">
+              <div class="cell given">4</div><div class="cell given">16</div>
+              <div class="cell given">12</div><div class="cell given">8</div>
+            </div>
+            <div class="grow">
+              <div class="cell user">13</div><div class="cell user">9</div>
+              <div class="cell user">14</div><div class="cell user">15</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="confetti" id="confetti"></div>
+  <div class="scrim"></div>
+  <div class="dialog">
+    <h3>Congrats! Puzzle solved</h3>
+    <p>You filled 1–16 so every row and column matches its sum in 2:08.</p>
+    <div class="acts">
+      <span class="text-btn">Back to board</span>
+      <span class="fill-btn">New puzzle</span>
+    </div>
+  </div>
+  <div class="nav">
+    <div class="navitem nav-off">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>Home</span>
+    </div>
+    <div class="navitem nav-on">
+      <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg><span>Game</span>
+    </div>
+  </div>
+</div></div>
+
+<!-- ============ FEATURE GRAPHIC 1024x500 ============ -->
+<div class="fg capture" id="fg">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+
+  <div class="left">
+    <img src="../../androidApp/src/main/res/drawable/juego16_header.png" alt="Juego 16">
+    <div class="tag" data-es="Coloca del 1 al 16 para que<br>cada fila y columna sume.">Place 1&ndash;16 so every<br>row and column adds up.</div>
+    <div class="sub">A quiet logic puzzle with instant feedback.</div>
+    <div class="pills">
+      <span class="pill">Easy</span>
+      <span class="pill">Medium</span>
+      <span class="pill">Hard</span>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="tilt">
+      <div style="display:flex;align-items:center;padding-right:22px;">
+        <div class="fgcell"></div>
+        <div class="fgcell"><div class="fgsum" style="background:var(--green);">38</div></div>
+        <div class="fgcell"><div class="fgsum" style="background:var(--green);">36</div></div>
+        <div class="fgcell"><div class="fgsum" style="background:var(--green);">34</div></div>
+        <div class="fgcell"><div class="fgsum" style="background:var(--coral);">28</div></div>
+      </div>
+      <div style="display:flex;align-items:center;">
+        <div>
+          <div class="fgcell"><div class="fgsum" style="background:var(--green);">20</div></div>
+          <div class="fgcell"><div class="fgsum" style="background:var(--green);">25</div></div>
+          <div class="fgcell"><div class="fgsum" style="background:var(--green);">40</div></div>
+          <div class="fgcell"><div class="fgsum" style="background:var(--coral);">51</div></div>
+        </div>
+        <div class="fggrid">
+          <div style="display:flex;">
+            <div class="fgtile">11</div><div class="fgtile given">6</div>
+            <div class="fgtile given">1</div><div class="fgtile">2</div>
+          </div>
+          <div style="display:flex;">
+            <div class="fgtile">10</div><div class="fgtile">5</div>
+            <div class="fgtile">7</div><div class="fgtile">3</div>
+          </div>
+          <div style="display:flex;">
+            <div class="fgtile given">4</div><div class="fgtile given">16</div>
+            <div class="fgtile given">12</div><div class="fgtile given">8</div>
+          </div>
+          <div style="display:flex;">
+            <div class="fgtile">13</div><div class="fgtile">9</div>
+            <div class="fgtile">14</div><div class="fgtile"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Spanish copy, taken verbatim from shared/src/commonMain/composeResources/values-es/strings.xml
+  // where the app has an equivalent string. Keys are the English text with whitespace collapsed.
+  const ES = {
+    'Your stats': 'Tus estadísticas',
+    '18 games completed': '18 partidas completadas',
+    'Easy': 'Fácil',
+    'Medium': 'Media',
+    'Hard': 'Difícil',
+    'Completed': 'Completadas',
+    'Best time': 'Mejor tiempo',
+    'Average': 'Promedio',
+    'Continue Easy · 1:12': 'Continuar Fácil · 1:12',
+    'New game': 'Nueva partida',
+    'Home': 'Inicio',
+    'Game': 'Juego',
+    'You will be given 6 tiles': 'Recibirás 6 casillas',
+    'You will be given 5 tiles': 'Recibirás 5 casillas',
+    'You will be given 4 tiles': 'Recibirás 4 casillas',
+    'Easy · Elapsed Time: 1:12': 'Fácil  · Tiempo transcurrido: 1:12',
+    'Easy · Elapsed Time: 2:08': 'Fácil  · Tiempo transcurrido: 2:08',
+    'End': 'Terminar',
+    'Undo': 'Deshacer',
+    'Erase': 'Borrar',
+    'Check': 'Comprobar',
+    'Reset': 'Reiniciar',
+    'Pause': 'Pausar',
+    'Congrats! Puzzle solved': '¡Enhorabuena! Puzzle resuelto',
+    'You filled 1–16 so every row and column matches its sum in 2:08.':
+      'Completaste del 1 al 16 para que cada fila y columna coincida con su suma en 2:08.',
+    'Back to board': 'Volver al tablero',
+    'New puzzle': 'Nuevo puzzle',
+    'A quiet logic puzzle with instant feedback.':
+      'Un puzzle de lógica tranquilo con respuesta al instante.',
+  };
+
+  // ?lang=es swaps every matching text node in place
+  (function () {
+    if (new URLSearchParams(location.search).get('lang') !== 'es') return;
+    document.documentElement.lang = 'es';
+
+    document.querySelectorAll('[data-es]').forEach(el => { el.innerHTML = el.dataset.es; });
+
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const pending = [];
+    while (walker.nextNode()) pending.push(walker.currentNode);
+    pending.forEach(node => {
+      const key = node.nodeValue.trim().replace(/\s+/g, ' ');
+      if (ES[key]) node.nodeValue = ES[key];
+    });
+  })();
+
+  // #s1..#s5 and #fg isolate a single target for pixel-exact capture
+  (function () {
+    function applyHash() {
+      const id = location.hash.replace('#', '');
+      document.querySelectorAll('.capture').forEach(el => el.classList.remove('active'));
+      if (id && document.getElementById(id)) {
+        document.body.classList.add('solo');
+        document.getElementById(id).classList.add('active');
+      } else {
+        document.body.classList.remove('solo');
+      }
+    }
+    applyHash();
+    window.addEventListener('hashchange', applyHash);
+  })();
+
+  // sprinkle confetti on the solved screen
+  (function () {
+    const host = document.getElementById('confetti');
+    const colors = ['#C45C4A', '#2E7D57', '#1C5854', '#F0D48A', '#E8D7B5'];
+    let seed = 7;
+    const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+    for (let i = 0; i < 90; i++) {
+      const el = document.createElement('i');
+      el.style.left = (rnd() * 100) + '%';
+      el.style.top = (rnd() * 78) + '%';
+      el.style.background = colors[Math.floor(rnd() * colors.length)];
+      el.style.transform = 'rotate(' + Math.floor(rnd() * 360) + 'deg)';
+      el.style.opacity = (0.55 + rnd() * 0.45).toFixed(2);
+      host.appendChild(el);
+    }
+  })();
+</script>
+</body>
+</html>
