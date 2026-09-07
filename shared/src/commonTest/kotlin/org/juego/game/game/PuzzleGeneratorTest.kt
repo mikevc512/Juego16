@@ -65,10 +65,20 @@ class PuzzleGeneratorTest {
 
     @Test
     fun countSolutionsDetectsMoreThanOneCompletion() {
-        val solution = (1..16).toList()
-        val start = IntArray(CELL_COUNT)
-        start[0] = 1
-        start[1] = 2
+        // These sums admit two completions by swapping the top-left 2x2:
+        // 1 2    vs    2 1
+        // 6 5          5 6
+        val solution = listOf(
+            1, 2, 4, 3,
+            6, 5, 7, 8,
+            9, 10, 11, 12,
+            13, 14, 15, 16,
+        )
+        val start = solution.toIntArray()
+        start[0] = 0
+        start[1] = 0
+        start[4] = 0
+        start[5] = 0
 
         val solutions = countSolutions(start, rowSumsOf(solution), colSumsOf(solution), limit = 2)
         assertEquals(2, solutions)

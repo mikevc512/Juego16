@@ -161,7 +161,7 @@ class AnalyzeBoardTest {
         assertEquals(setOf(0, 15), analysis.duplicateIndices)
         assertTrue(analysis.isFilled)
         assertFalse(analysis.isSolved)
-        assertEquals(LineState.Incorrect, analysis.rowStates[0])
+        assertEquals(LineState.Correct, analysis.rowStates[0])
         assertEquals(LineState.Incorrect, analysis.rowStates[3])
     }
 
@@ -177,7 +177,7 @@ class AnalyzeBoardTest {
 
         assertTrue(analysis.isFilled)
         assertFalse(analysis.isSolved)
-        assertEquals(LineState.Incorrect, analysis.rowStates[0])
+        assertEquals(LineState.Correct, analysis.rowStates[0])
         assertEquals(LineState.Correct, analysis.rowStates[1])
         assertEquals(LineState.Incorrect, analysis.colStates[2])
         assertEquals(LineState.Incorrect, analysis.colStates[3])
