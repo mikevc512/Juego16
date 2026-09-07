@@ -36,7 +36,7 @@ fun GameScreen(
     }
 
      Column(modifier = Modifier.fillMaxSize().navigationBarsPadding()) {
-         BoxWithConstraints(Modifier.fillMaxSize().background(PaperBackground)) {
+         BoxWithConstraints(modifier = Modifier.fillMaxSize().background(PaperBackground)) {
              val landscape = maxWidth > maxHeight && maxWidth > 680.dp
 
              val cellSize = if (landscape) {

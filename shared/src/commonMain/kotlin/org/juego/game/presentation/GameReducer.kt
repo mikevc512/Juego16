@@ -43,6 +43,7 @@ fun reduce(
         state
     }
     GameIntent.Pause -> state.copy(isPaused = true)
+    GameIntent.ShowGameSelector -> state.copy(showSelectDifficulty = true)
     GameIntent.Resume -> state.copy(isPaused = false)
     GameIntent.DismissResultDialog -> {
         state.copy(game = state.game.copy(showingErrors = false))

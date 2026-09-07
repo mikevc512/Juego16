@@ -143,8 +143,8 @@ fun App() {
                         entry<HomeRoute> {
                             HomeScreen(
                                 onContinueGame = { selectTab(AppTab.GAME) },
-                                onPlay = {
-                                    viewModel.onIntent(GameIntent.NewGame(Difficulty.Easy))
+                                onIntent = {
+                                    viewModel.onIntent(it)
                                     selectTab(AppTab.GAME)
                                 },
                             )

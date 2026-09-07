@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,23 +25,31 @@ fun ActiveScreenLandscape(
     onIntent: (GameIntent) -> Unit,
     showDialog: () -> Unit
 ) {
+
+    val scrollState = rememberScrollState()
+
     Row(
         modifier = Modifier.fillMaxSize().padding(20.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        GameHeader(
-            elapsedSeconds = uiState.elapsedSeconds,
-            difficulty = state.puzzle.difficulty,
-            isPaused = uiState.isPaused,
-            modifier = Modifier.widthIn(max = 280.dp),
-        )
-        KubokBoard(
-            modifier = Modifier.padding(end = 32.dp),
-            state = state,
-            cellSize = cellSize,
-            onCellClick = { if (!uiState.isPaused) onIntent(GameIntent.SelectCell(it)) },
-        )
+        Column(
+            modifier = Modifier.verticalScroll(scrollState).padding(bottom = 42.dp),
+        ) {
+            GameHeader(
+                modifier = Modifier.widthIn(max = 280.dp).align(alignment = Alignment.CenterHorizontally),
+                elapsedSeconds = uiState.elapsedSeconds,
+                difficulty = state.puzzle.difficulty,
+                isPaused = uiState.isPaused
+            )
+            KubokBoard(
+                modifier = Modifier.padding(end = 52.dp),
+                state = state,
+                cellSize = cellSize,
+                onCellClick = { if (!uiState.isPaused) onIntent(GameIntent.SelectCell(it)) },
+            )
+        }
+
         Column(
             modifier = Modifier.widthIn(max = 360.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),

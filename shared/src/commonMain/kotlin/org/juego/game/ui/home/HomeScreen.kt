@@ -55,12 +55,13 @@ import org.juego.game.ui.dialog.formatTime
 import org.juego.game.ui.localizedName
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.juego.game.presentation.GameIntent
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun HomeScreen(
     onContinueGame: () -> Unit = {},
-    onPlay: () -> Unit = {},
+    onIntent: (GameIntent) -> Unit = { },
     viewModel: HomeViewModel = koinViewModel(),
 ) {
     val stats by viewModel.stats.collectAsStateWithLifecycle()
@@ -70,7 +71,7 @@ fun HomeScreen(
         stats = stats,
         savedGame = savedGame,
         onContinueGame = onContinueGame,
-        onPlay = onPlay,
+        onIntent = onIntent,
     )
 }
 
@@ -79,7 +80,7 @@ internal fun HomeScreenContent(
     stats: UserStats,
     savedGame: SavedGameSummary?,
     onContinueGame: () -> Unit,
-    onPlay: () -> Unit,
+    onIntent: (GameIntent) -> Unit = { },
 ) {
     Column(
         modifier = Modifier
@@ -148,7 +149,13 @@ internal fun HomeScreenContent(
         }
 
         OutlinedButton(
-            onClick = onPlay,
+            onClick = {
+                if (inProgressGame != null) {
+                    onIntent(GameIntent.NewGame(savedGame.difficulty))
+                } else {
+                    onIntent(GameIntent.ShowGameSelector)
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
         ) {

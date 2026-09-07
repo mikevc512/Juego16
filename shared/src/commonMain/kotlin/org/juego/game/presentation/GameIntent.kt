@@ -18,6 +18,7 @@ sealed interface GameIntent {
     data object Pause : GameIntent
     data object EndGame : GameIntent
     data object Resume : GameIntent
+    data object ShowGameSelector : GameIntent
     data object PersistGame : GameIntent
     data object AppBackgrounded : GameIntent
     data object AppForegrounded : GameIntent

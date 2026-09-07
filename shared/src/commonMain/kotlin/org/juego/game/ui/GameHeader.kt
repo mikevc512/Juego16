@@ -14,17 +14,16 @@ import kotlinproject.shared.generated.resources.Res
 import kotlinproject.shared.generated.resources.app_name
 import kotlinproject.shared.generated.resources.continue_game_paused
 import kotlinproject.shared.generated.resources.elapsed_time
-import kotlinproject.shared.generated.resources.elapsed_time_paused
 import org.juego.game.game.Difficulty
 import org.juego.game.ui.dialog.formatTime
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun GameHeader(
+    modifier: Modifier = Modifier,
     elapsedSeconds: Int,
     difficulty: Difficulty,
-    isPaused: Boolean = false,
-    modifier: Modifier = Modifier,
+    isPaused: Boolean = false
 ) {
     Column(
         modifier = modifier.fillMaxWidth().padding(horizontal = 8.dp).padding(top = 16.dp),
