@@ -51,6 +51,7 @@ import org.juego.game.local.model.UserStats
 import org.juego.game.game.Difficulty
 import org.juego.game.presentation.HomeViewModel
 import org.juego.game.ui.PaperBackground
+import org.juego.game.ui.dialog.HowToPlayDialog
 import org.juego.game.ui.dialog.formatTime
 import org.juego.game.ui.localizedName
 import org.jetbrains.compose.resources.painterResource
@@ -65,12 +66,15 @@ fun HomeScreen(
 ) {
     val stats by viewModel.stats.collectAsStateWithLifecycle()
     val savedGame by viewModel.savedGame.collectAsStateWithLifecycle()
+    val isFirstLaunch by viewModel.isFirstLaunch.collectAsStateWithLifecycle()
 
     HomeScreenContent(
         stats = stats,
         savedGame = savedGame,
+        showHowToPlay = isFirstLaunch == true,
         onContinueGame = onContinueGame,
         onPlay = onPlay,
+        onDismissHowToPlay = viewModel::dismissHowToPlay,
     )
 }
 
@@ -78,9 +82,15 @@ fun HomeScreen(
 internal fun HomeScreenContent(
     stats: UserStats,
     savedGame: SavedGameSummary?,
+    showHowToPlay: Boolean,
     onContinueGame: () -> Unit,
     onPlay: () -> Unit,
+    onDismissHowToPlay: () -> Unit,
 ) {
+    HowToPlayDialog(
+        visible = showHowToPlay,
+        onDismiss = onDismissHowToPlay,
+    )
     Column(
         modifier = Modifier
             .fillMaxWidth()

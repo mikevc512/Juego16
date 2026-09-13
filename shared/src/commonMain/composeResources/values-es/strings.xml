@@ -37,4 +37,7 @@
     <string name="back_to_board">Volver al tablero</string>
     <string name="end_game_title">¿Seguro que quieres terminar la partida?</string>
     <string name="end_game_message">Si terminas la partida perderás todos los datos y no contará en las estadísticas.</string>
+    <string name="how_to_play_title">Cómo jugar</string>
+    <string name="how_to_play_message">Completa el tablero 4×4 con cada número del 1 al 16 una sola vez.\n\nCada fila y cada columna tiene una suma objetivo. Usa los números dados y rellena las casillas vacías para que esas sumas coincidan.\n\nToca una casilla y elige un número. Borrar quita un número que hayas puesto; los números dados no se pueden cambiar. Pulsa Comprobar cuando creas que el puzzle está completo. Las sumas correctas se ponen en verde, y los duplicados o las sumas incorrectas se resaltan.</string>
+    <string name="how_to_play_got_it">Entendido</string>
 </resources>
