@@ -1,6 +1,5 @@
 package org.juego.game.ui.gameboard
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import org.juego.game.game.GameState
@@ -17,12 +16,10 @@ fun GameScreenLandscape(
     showDialog: () -> Unit
 ) {
     if (uiState.showSelectDifficulty) {
-        Column {
-            DifficultySelector(
-                selected = state.puzzle.difficulty,
-                onSelect = { onIntent(GameIntent.NewGame(it)) },
-            )
-        }
+        DifficultySelector(
+            selected = state.puzzle.difficulty,
+            onSelect = { onIntent(GameIntent.NewGame(it)) }
+        )
     } else {
         ActiveScreenLandscape(
             uiState = uiState,
