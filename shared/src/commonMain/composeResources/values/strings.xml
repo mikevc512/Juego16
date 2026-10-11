@@ -37,4 +37,7 @@
     <string name="back_to_board">Back to board</string>
     <string name="end_game_title">Are you sure you would like to end game?</string>
     <string name="end_game_message">By ending the game you will lose all data and won't be contributed to stats.</string>
+    <string name="how_to_play_title">How to play</string>
+    <string name="how_to_play_message">Fill the 4×4 board with each number from 1 to 16 exactly once.\n\nEvery row and column has a target sum. Use the given numbers and fill the empty cells so those sums match.\n\nTap a cell, then choose a number. Erase clears a cell you entered; given numbers cannot be changed. Check when you think the puzzle is complete. Matching sums turn green, and duplicates or wrong sums are highlighted.</string>
+    <string name="how_to_play_got_it">Got it</string>
 </resources>

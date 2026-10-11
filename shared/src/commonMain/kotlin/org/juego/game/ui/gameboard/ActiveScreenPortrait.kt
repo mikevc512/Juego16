@@ -66,7 +66,7 @@ fun ActiveScreenPortrait(
         )
 
         if (uiState.isPaused) {
-            Spacer(Modifier.height(56.dp))
+            Spacer(Modifier.height(72.dp))
         }
     }
 }

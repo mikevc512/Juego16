@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,14 +19,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -37,6 +45,7 @@ import kotlinproject.shared.generated.resources.continue_game
 import kotlinproject.shared.generated.resources.continue_game_paused
 import kotlinproject.shared.generated.resources.empty_value
 import kotlinproject.shared.generated.resources.games_completed
+import kotlinproject.shared.generated.resources.how_to_play_title
 import kotlinproject.shared.generated.resources.juego16_header
 import kotlinproject.shared.generated.resources.new_game
 import kotlinproject.shared.generated.resources.play
@@ -51,6 +60,7 @@ import org.juego.game.local.model.UserStats
 import org.juego.game.game.Difficulty
 import org.juego.game.presentation.HomeViewModel
 import org.juego.game.ui.PaperBackground
+import org.juego.game.ui.dialog.HowToPlayDialog
 import org.juego.game.ui.dialog.formatTime
 import org.juego.game.ui.localizedName
 import org.jetbrains.compose.resources.painterResource
@@ -66,12 +76,20 @@ fun HomeScreen(
 ) {
     val stats by viewModel.stats.collectAsStateWithLifecycle()
     val savedGame by viewModel.savedGame.collectAsStateWithLifecycle()
+    val isFirstLaunch by viewModel.isFirstLaunch.collectAsStateWithLifecycle()
+    var showHowToPlayManually by remember { mutableStateOf(false) }
 
     HomeScreenContent(
         stats = stats,
         savedGame = savedGame,
+        showHowToPlay = isFirstLaunch == true || showHowToPlayManually,
         onContinueGame = onContinueGame,
-        onIntent = onIntent,
+        onPlay = onPlay,
+        onShowHowToPlay = { showHowToPlayManually = true },
+        onDismissHowToPlay = {
+            showHowToPlayManually = false
+            viewModel.dismissHowToPlay()
+        },
     )
 }
 
@@ -79,13 +97,24 @@ fun HomeScreen(
 internal fun HomeScreenContent(
     stats: UserStats,
     savedGame: SavedGameSummary?,
+    showHowToPlay: Boolean,
     onContinueGame: () -> Unit,
-    onIntent: (GameIntent) -> Unit = { },
+    onPlay: () -> Unit,
+    onShowHowToPlay: () -> Unit,
+    onDismissHowToPlay: () -> Unit,
 ) {
-    Column(
+    HowToPlayDialog(
+        visible = showHowToPlay,
+        onDismiss = onDismissHowToPlay,
+    )
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(PaperBackground),
+    ) {
+        Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(PaperBackground)
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp, vertical = 24.dp)
             .padding(top = 24.dp),
@@ -162,7 +191,22 @@ internal fun HomeScreenContent(
             Text(stringResource(if (inProgressGame != null) Res.string.new_game else Res.string.play))
         }
 
-        Spacer(Modifier.height(110.dp))
+            Spacer(Modifier.height(110.dp))
+        }
+
+        IconButton(
+            onClick = onShowHowToPlay,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 16.dp)
+                .padding(4.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Info,
+                contentDescription = stringResource(Res.string.how_to_play_title),
+                tint = MaterialTheme.colorScheme.onBackground,
+            )
+        }
     }
 }
 @Composable

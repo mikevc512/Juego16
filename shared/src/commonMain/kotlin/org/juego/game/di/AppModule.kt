@@ -3,7 +3,11 @@ package org.juego.game.di
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import org.juego.game.local.GameRepository
+import org.juego.game.local.UserPreferencesRepository
+import org.juego.game.local.datastore.getDataStore
 import org.juego.game.local.getRoomDatabase
 import org.juego.game.local.AppDatabase
 import org.juego.game.game.PuzzleGenerator
@@ -20,10 +24,17 @@ val appModule = module {
     singleOf(::PuzzleGenerator)
     single<Random> { Random.Default }
     single<AppDatabase> { getRoomDatabase() }
+    single<DataStore<Preferences>> { getDataStore() }
     single {
         GameRepository(
             database = get(),
             ioDispatcher = get(named("IO"))
+        )
+    }
+    single {
+        UserPreferencesRepository(
+            dataStore = get(),
+            ioDispatcher = get(named("IO")),
         )
     }
     viewModelOf(::GameViewModel)
