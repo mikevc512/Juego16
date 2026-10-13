@@ -2,9 +2,18 @@ package org.juego.game.game
 
 import kotlin.random.Random
 
+private const val MAX_GAME_CREATE_ATTEMPTS = 120
 class PuzzleGenerator(private val random: Random = Random.Default) {
     fun generate(difficulty: Difficulty): Puzzle {
-        repeat(120) {
+        return createCheckedGame(difficulty) ?: generateUnchecked(difficulty)
+    }
+
+    /**
+     * Creates verified one solution game with provided difficulty, it attempts up to 120 times
+     * before it defaults to just creating a game that is not verified to have one answer
+     */
+    private fun createCheckedGame(difficulty: Difficulty) : Puzzle? {
+        repeat(MAX_GAME_CREATE_ATTEMPTS) {
             val solution = (1..CELL_COUNT).shuffled(random)
             val rowSums = rowSumsOf(solution)
             val colSums = colSumsOf(solution)
@@ -24,7 +33,7 @@ class PuzzleGenerator(private val random: Random = Random.Default) {
                 return toPuzzle(solution, given, rowSums, colSums, difficulty)
             }
         }
-        return generateUnchecked(difficulty)
+        return null
     }
 
     private fun generateUnchecked(difficulty: Difficulty): Puzzle {

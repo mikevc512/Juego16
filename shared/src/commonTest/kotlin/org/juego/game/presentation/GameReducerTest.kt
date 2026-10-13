@@ -6,6 +6,7 @@ import org.juego.game.game.PuzzleGenerator
 import org.juego.game.presentation.GameIntent
 import org.juego.game.presentation.GameUiState
 import org.juego.game.presentation.reduce
+import org.juego.game.presentation.reduceWithTimer
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,31 +18,53 @@ class GameReducerTest {
     private val generator = PuzzleGenerator(Random(1))
 
     @Test
-    fun tickDoesNotAdvanceWhenPaused() {
+    fun pauseCommitsElapsedAndStopsTheClock() {
         val started = GameUiState(
             game = GameState.newGame(Difficulty.Easy, generator),
             isGameScreenVisible = true,
+            elapsedSeconds = 10,
+            runningSinceEpochMs = 1_000L,
         )
-        val paused = reduce(started, GameIntent.Pause, generator)
-        val ticked = reduce(paused, GameIntent.Tick, generator)
+        val paused = reduceWithTimer(started, GameIntent.Pause, generator, nowEpochMs = 4_500L)
 
         assertTrue(paused.isPaused)
-        assertEquals(0, ticked.elapsedSeconds)
+        assertEquals(13, paused.elapsedSeconds)
+        assertEquals(null, paused.runningSinceEpochMs)
+        assertEquals(13, paused.liveElapsedSeconds(9_000L))
     }
 
     @Test
-    fun tickAdvancesOnlyWhilePlayingOnScreen() {
+    fun clockAdvancesFromTheAnchorOnlyWhilePlayingOnScreen() {
         val started = GameUiState(
             game = GameState.newGame(Difficulty.Easy, generator),
             isGameScreenVisible = true,
         )
-        val ticked = reduce(started, GameIntent.Tick, generator)
-        val backgrounded = reduce(ticked, GameIntent.AppBackgrounded, generator)
-        val ignored = reduce(backgrounded, GameIntent.Tick, generator)
+        val running = reduceWithTimer(started, GameIntent.AppForegrounded, generator, nowEpochMs = 5_000L)
+        val backgrounded = reduceWithTimer(running, GameIntent.AppBackgrounded, generator, nowEpochMs = 8_000L)
 
-        assertEquals(1, ticked.elapsedSeconds)
-        assertEquals(1, ignored.elapsedSeconds)
+        assertEquals(5_000L, running.runningSinceEpochMs)
+        assertEquals(0, running.elapsedSeconds)
+        assertEquals(3, running.liveElapsedSeconds(8_000L))
+        assertEquals(3, backgrounded.elapsedSeconds)
+        assertEquals(null, backgrounded.runningSinceEpochMs)
+        assertEquals(3, backgrounded.liveElapsedSeconds(12_000L))
         assertFalse(backgrounded.isForeground)
+    }
+
+    @Test
+    fun boardEditKeepsTheRunningClockAnchor() {
+        val running = GameUiState(
+            game = GameState.newGame(Difficulty.Easy, generator),
+            isGameScreenVisible = true,
+            elapsedSeconds = 4,
+            runningSinceEpochMs = 10_000L,
+        )
+        val playableIndex = running.game.puzzle.given.indexOfFirst { !it }
+        val next = reduceWithTimer(running, GameIntent.SelectCell(playableIndex), generator, nowEpochMs = 15_000L)
+
+        assertEquals(4, next.elapsedSeconds)
+        assertEquals(10_000L, next.runningSinceEpochMs)
+        assertEquals(9, next.liveElapsedSeconds(15_000L))
     }
 
     @Test

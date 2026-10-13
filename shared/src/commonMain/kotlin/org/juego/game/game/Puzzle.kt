@@ -92,8 +92,6 @@ fun analyzeBoard(
     )
 }
 
-
-
 private fun lineState(values: List<Int>, target: Int): LineState {
     if (values.any { it == 0 }) return LineState.Incomplete
     val sumMatches = values.sum() == target

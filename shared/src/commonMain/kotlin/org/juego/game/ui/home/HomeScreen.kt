@@ -70,6 +70,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun HomeScreen(
+    modifier: Modifier,
     onContinueGame: () -> Unit = {},
     onIntent: (GameIntent) -> Unit = { },
     viewModel: HomeViewModel = koinViewModel(),
@@ -80,11 +81,12 @@ fun HomeScreen(
     var showHowToPlayManually by remember { mutableStateOf(false) }
 
     HomeScreenContent(
+        modifier = modifier,
         stats = stats,
         savedGame = savedGame,
         showHowToPlay = isFirstLaunch == true || showHowToPlayManually,
         onContinueGame = onContinueGame,
-        onPlay = onPlay,
+        onIntent = onIntent,
         onShowHowToPlay = { showHowToPlayManually = true },
         onDismissHowToPlay = {
             showHowToPlayManually = false
@@ -95,20 +97,18 @@ fun HomeScreen(
 
 @Composable
 internal fun HomeScreenContent(
+    modifier: Modifier,
     stats: UserStats,
     savedGame: SavedGameSummary?,
     showHowToPlay: Boolean,
+    onIntent: (GameIntent) -> Unit,
     onContinueGame: () -> Unit,
-    onPlay: () -> Unit,
     onShowHowToPlay: () -> Unit,
     onDismissHowToPlay: () -> Unit,
 ) {
-    HowToPlayDialog(
-        visible = showHowToPlay,
-        onDismiss = onDismissHowToPlay,
-    )
+    HowToPlayDialog(visible = showHowToPlay, onDismiss = onDismissHowToPlay)
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(PaperBackground),
     ) {
@@ -117,7 +117,7 @@ internal fun HomeScreenContent(
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp, vertical = 24.dp)
-            .padding(top = 24.dp),
+            .padding(top = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
@@ -190,9 +190,7 @@ internal fun HomeScreenContent(
         ) {
             Text(stringResource(if (inProgressGame != null) Res.string.new_game else Res.string.play))
         }
-
-            Spacer(Modifier.height(110.dp))
-        }
+    }
 
         IconButton(
             onClick = onShowHowToPlay,
@@ -209,6 +207,7 @@ internal fun HomeScreenContent(
         }
     }
 }
+
 @Composable
 private fun DifficultyStatsCard(
     stats: DifficultyStats,

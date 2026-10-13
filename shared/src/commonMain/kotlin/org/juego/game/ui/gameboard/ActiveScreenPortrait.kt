@@ -37,10 +37,11 @@ fun ActiveScreenPortrait(
     ) {
         GameHeader(
             elapsedSeconds = uiState.elapsedSeconds,
+            runningSinceEpochMs = uiState.runningSinceEpochMs,
             difficulty = state.puzzle.difficulty,
             isPaused = uiState.isPaused,
         )
-        KubokBoard(
+        JuegoBoard(
             modifier = Modifier.padding(end = 32.dp, top = 24.dp),
             state = state,
             cellSize = cellSize,
@@ -64,9 +65,6 @@ fun ActiveScreenPortrait(
             onIntent = onIntent,
             difficulty = uiState.game.puzzle.difficulty
         )
-
-        if (uiState.isPaused) {
-            Spacer(Modifier.height(72.dp))
-        }
+        Spacer(Modifier.height(72.dp))
     }
 }

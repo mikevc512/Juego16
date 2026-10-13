@@ -1,4 +1,14 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { load(it) }
+    }
+}
+
+val hiddenAppId = localProperties.getProperty("APP_ID") ?: "org.juego.game"
 
 plugins {
     alias(libs.plugins.androidApplication)
@@ -37,6 +47,8 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 5
         versionName = "1.0.4"
+        
+        manifestPlaceholders["manifestApplicationId"] = hiddenAppId
     }
     packaging {
         resources {

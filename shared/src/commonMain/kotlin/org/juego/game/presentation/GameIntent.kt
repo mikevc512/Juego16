@@ -10,7 +10,6 @@ sealed interface GameIntent {
     data object Reset : GameIntent
     data object Check : GameIntent
     data class NewGame(val difficulty: Difficulty) : GameIntent
-    data object Tick : GameIntent
     data object ShowAd : GameIntent
     data object DismissAd : GameIntent
     data object DismissResultDialog : GameIntent

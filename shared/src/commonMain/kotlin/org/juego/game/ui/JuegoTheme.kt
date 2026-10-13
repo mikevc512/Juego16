@@ -70,7 +70,7 @@ private val KubokTypography = Typography(
 )
 
 @Composable
-fun KubokTheme(content: @Composable () -> Unit) {
+fun JuegoTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = KubokColorScheme,
         typography = KubokTypography,

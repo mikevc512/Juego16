@@ -37,11 +37,6 @@ fun reduce(
     is GameIntent.EndGame -> state.copy(showSelectDifficulty = true)
     GameIntent.ShowAd -> state.copy(showAd = true)
     GameIntent.DismissAd -> state.copy(showAd = false)
-    GameIntent.Tick -> if (state.isTimerRunning) {
-        state.copy(elapsedSeconds = state.elapsedSeconds + 1)
-    } else {
-        state
-    }
     GameIntent.Pause -> state.copy(isPaused = true)
     GameIntent.ShowGameSelector -> state.copy(showSelectDifficulty = true)
     GameIntent.Resume -> state.copy(isPaused = false)
@@ -55,6 +50,25 @@ fun reduce(
     GameIntent.AppBackgrounded -> state.copy(isForeground = false)
     GameIntent.AppForegrounded -> state.copy(isForeground = true)
     is GameIntent.SetGameScreenVisible -> state.copy(isGameScreenVisible = intent.visible)
+}
+
+fun reduceWithTimer(
+    state: GameUiState,
+    intent: GameIntent,
+    generator: PuzzleGenerator,
+    nowEpochMs: Long,
+): GameUiState {
+    val reduced = reduce(state, intent, generator)
+    val timerStopped = state.isTimerRunning && !reduced.isTimerRunning
+    val timed = if (timerStopped) {
+        reduced.copy(
+            elapsedSeconds = state.liveElapsedSeconds(nowEpochMs),
+            runningSinceEpochMs = null,
+        )
+    } else {
+        reduced
+    }
+    return timed.withTimerAnchor(nowEpochMs)
 }
 
 private inline fun GameUiState.ifPlayable(transform: GameUiState.() -> GameUiState): GameUiState =

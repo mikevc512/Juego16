@@ -3,6 +3,7 @@ package org.juego.game.ui.gameboard
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -34,15 +35,16 @@ fun ActiveScreenLandscape(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
-            modifier = Modifier.verticalScroll(scrollState).padding(bottom = 42.dp),
+            modifier = Modifier.verticalScroll(scrollState).padding(bottom = 82.dp),
         ) {
             GameHeader(
                 modifier = Modifier.widthIn(max = 280.dp).align(alignment = Alignment.CenterHorizontally),
                 elapsedSeconds = uiState.elapsedSeconds,
+                runningSinceEpochMs = uiState.runningSinceEpochMs,
                 difficulty = state.puzzle.difficulty,
                 isPaused = uiState.isPaused
             )
-            KubokBoard(
+            JuegoBoard(
                 modifier = Modifier.padding(end = 52.dp),
                 state = state,
                 cellSize = cellSize,
@@ -65,6 +67,8 @@ fun ActiveScreenLandscape(
                 onIntent = onIntent,
                 showDialog = showDialog
             )
+
+            Spacer(modifier = Modifier.padding(12.dp))
         }
     }
 }

@@ -10,10 +10,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import org.juego.game.local.GameRepository
 import org.juego.game.game.Difficulty
 import org.juego.game.game.GameState
 import org.juego.game.game.PuzzleGenerator
+import org.juego.game.local.GameRepository
+import org.juego.game.local.currentEpochMs
 
 class GameViewModel(
     private val generator: PuzzleGenerator,
@@ -32,22 +33,30 @@ class GameViewModel(
         viewModelScope.launch {
             val restored = repository.loadSavedGame()
             _uiState.update { current ->
-                restored?.copy(
+                val restoredState = restored?.copy(
                     isRestoring = false,
                     isForeground = true,
                     isGameScreenVisible = current.isGameScreenVisible,
                 ) ?: current.copy(isRestoring = false)
+                restoredState.withTimerAnchor(currentEpochMs())
             }
+            var lastElapsedSecond = -1
             while (true) {
                 delay(1_000)
-                onIntent(GameIntent.Tick)
                 val state = uiState.value
-                if (!state.isTimerRunning) continue
-                when (state.elapsedSeconds) {
+                if (!state.isTimerRunning) {
+                    lastElapsedSecond = -1
+                    continue
+                }
+                val elapsed = state.liveElapsedSeconds(currentEpochMs())
+                if (elapsed == lastElapsedSecond) continue
+                lastElapsedSecond = elapsed
+                when (elapsed) {
                     20 -> onIntent(GameIntent.ShowAd)
                     40 -> onIntent(GameIntent.DismissAd)
                     60 -> onIntent(GameIntent.ShowAd)
                 }
+                if (elapsed % 5 == 0) persistCheckpoint()
             }
         }
     }
@@ -55,7 +64,7 @@ class GameViewModel(
     fun onIntent(intent: GameIntent) {
         val previous = _uiState.value
         _uiState.update { current ->
-            reduce(current, intent, generator)
+            reduceWithTimer(current, intent, generator, currentEpochMs())
         }
         val next = _uiState.value
         persistIfNeeded(intent, previous, next)
@@ -79,28 +88,33 @@ class GameViewModel(
                 if (justSolved) {
                     repository.recordCompletedGame(
                         difficulty = next.game.puzzle.difficulty,
-                        elapsedSeconds = next.elapsedSeconds,
+                        elapsedSeconds = next.liveElapsedSeconds(currentEpochMs()),
                     )
                 }
-                if (shouldPersist(intent, previous, next)) {
-                    repository.saveInProgressGame(latest)
+                if (shouldPersist(intent)) {
+                    repository.saveInProgressGame(latest.withLiveElapsed())
                 }
             }
         }
     }
 
-    private fun shouldPersist(
-        intent: GameIntent,
-        previous: GameUiState,
-        next: GameUiState,
-    ): Boolean = when (intent) {
+    private fun shouldPersist(intent: GameIntent): Boolean = when (intent) {
         GameIntent.EndGame -> false
-        GameIntent.Tick ->
-            next.isTimerRunning &&
-                next.elapsedSeconds != previous.elapsedSeconds &&
-                next.elapsedSeconds % 5 == 0
         GameIntent.ShowAd, GameIntent.DismissAd, GameIntent.AppForegrounded -> false
         is GameIntent.SetGameScreenVisible -> !intent.visible
         else -> true
     }
+
+    private fun persistCheckpoint() {
+        viewModelScope.launch {
+            persistMutex.withLock {
+                val latest = _uiState.value
+                if (latest.isRestoring || !latest.isTimerRunning || latest.showSelectDifficulty) return@withLock
+                repository.saveInProgressGame(latest.withLiveElapsed())
+            }
+        }
+    }
 }
+
+private fun GameUiState.withLiveElapsed(): GameUiState =
+    copy(elapsedSeconds = liveElapsedSeconds(currentEpochMs()))

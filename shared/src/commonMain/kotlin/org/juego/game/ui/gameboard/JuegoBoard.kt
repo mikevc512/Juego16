@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,7 +38,7 @@ import org.juego.game.ui.SelectedCell
 import org.juego.game.ui.Teal
 
 @Composable
-fun KubokBoard(
+fun JuegoBoard(
     state: GameState,
     cellSize: Dp,
     onCellClick: (Int) -> Unit,
@@ -49,7 +48,7 @@ fun KubokBoard(
     val sumSize = cellSize * 0.78f
 
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Row(modifier = Modifier.padding(end = 24.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Spacer(Modifier.size(cellSize))
             repeat(BOARD_SIZE) { col ->
                 Box(Modifier.size(cellSize), contentAlignment = Alignment.Center) {

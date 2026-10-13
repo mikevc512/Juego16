@@ -16,7 +16,7 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3125638128894149~8857181684" />
+            android:value="${manifestApplicationId}.fileprovider" />
 
         <activity
             android:exported="true"
