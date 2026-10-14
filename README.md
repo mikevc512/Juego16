@@ -1,4 +1,16 @@
+# Juego 16 
 This is a Kotlin Multiplatform project targeting Android, iOS.
+
+
+### Android: 
+<img width="200" height="400" alt="Screenshot_20261014_170557" src="https://github.com/user-attachments/assets/66ed0386-aca2-491b-9597-8f2221b60308" /> 
+
+<img width="200" height="400" alt="Screenshot_20261014_165827" src="https://github.com/user-attachments/assets/64229ab7-2be9-406f-8649-26580e4c1bcc" />
+
+<img width="200" height="400" alt="Screenshot_20261014_165816" src="https://github.com/user-attachments/assets/7c9f8275-8962-4fc7-9d6f-f5273f5b4689" />
+
+<img width="200" height="400" alt="Screenshot_20261014_165749" src="https://github.com/user-attachments/assets/0f733f0b-69e0-4f24-a51d-97ee34024bf7" />
+
 
 * [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,
   you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
