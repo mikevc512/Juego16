@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import org.juego.game.presentation.GameIntent
@@ -21,6 +22,12 @@ import org.juego.game.ui.PaperBackground
 import org.juego.game.ui.dialog.EndGameDialog
 import org.juego.game.ui.dialog.IncorrectPuzzleDialog
 import org.juego.game.ui.dialog.PuzzleSolvedDialog
+
+private const val LANDSCAPE_THRESHOLD = 680
+private const val CELL_RATIO_PORTION_LANDSCAPE = 0.09f
+private const val CELL_RATIO_PORTION_PORTRAIT = 0.11f
+private const val CELL_WIDTH_RATIO = 0.16f
+
 
 @Composable
 fun GameScreen(
@@ -37,13 +44,8 @@ fun GameScreen(
 
      Column(modifier = Modifier.fillMaxSize().navigationBarsPadding()) {
          BoxWithConstraints(modifier = Modifier.fillMaxSize().background(PaperBackground)) {
-             val landscape = maxWidth > maxHeight && maxWidth > 680.dp
-
-             val cellSize = if (landscape) {
-                 min(min(maxHeight * 0.16f, maxWidth * 0.09f), 72.dp)
-             } else {
-                 min(min(maxWidth * 0.16f, maxHeight * 0.11f), 72.dp)
-             }
+             val landscape = maxWidth > maxHeight && maxWidth > LANDSCAPE_THRESHOLD.dp
+             val cellSize  = getCellSize(maxHeight, maxWidth, landscape)
 
              if (landscape) {
                  GameScreenLandscape(uiState, gameState, cellSize, onIntent,
@@ -89,4 +91,18 @@ fun GameScreen(
              )
          }
      }
+}
+
+private fun getCellSize(maxHeight: Dp, maxWidth: Dp, landscape: Boolean): Dp {
+    return if (landscape) {
+        min(
+            min(maxHeight * CELL_WIDTH_RATIO, maxWidth * CELL_RATIO_PORTION_LANDSCAPE),
+            72.dp
+        )
+    } else {
+        min(
+            min(maxWidth * CELL_WIDTH_RATIO, maxHeight * CELL_RATIO_PORTION_PORTRAIT),
+            72.dp
+        )
+    }
 }

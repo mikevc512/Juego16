@@ -30,35 +30,8 @@ class GameViewModel(
     private val persistMutex = Mutex()
 
     init {
-        viewModelScope.launch {
-            val restored = repository.loadSavedGame()
-            _uiState.update { current ->
-                val restoredState = restored?.copy(
-                    isRestoring = false,
-                    isForeground = true,
-                    isGameScreenVisible = current.isGameScreenVisible,
-                ) ?: current.copy(isRestoring = false)
-                restoredState.withTimerAnchor(currentEpochMs())
-            }
-            var lastElapsedSecond = -1
-            while (true) {
-                delay(1_000)
-                val state = uiState.value
-                if (!state.isTimerRunning) {
-                    lastElapsedSecond = -1
-                    continue
-                }
-                val elapsed = state.liveElapsedSeconds(currentEpochMs())
-                if (elapsed == lastElapsedSecond) continue
-                lastElapsedSecond = elapsed
-                when (elapsed) {
-                    20 -> onIntent(GameIntent.ShowAd)
-                    40 -> onIntent(GameIntent.DismissAd)
-                    60 -> onIntent(GameIntent.ShowAd)
-                }
-                if (elapsed % 5 == 0) persistCheckpoint()
-            }
-        }
+        restoreInProgressGame()
+        startTimerLoop()
     }
 
     fun onIntent(intent: GameIntent) {
@@ -68,6 +41,34 @@ class GameViewModel(
         }
         val next = _uiState.value
         persistIfNeeded(intent, previous, next)
+    }
+
+    private fun restoreInProgressGame() = viewModelScope.launch {
+        val restored = repository.loadSavedGame()
+        _uiState.update { current ->
+            val restoredState = restored?.copy(
+                isRestoring = false,
+                isForeground = true,
+                isGameScreenVisible = current.isGameScreenVisible,
+            ) ?: current.copy(isRestoring = false)
+            restoredState.withTimerAnchor(currentEpochMs())
+        }
+    }
+
+    private fun startTimerLoop() = viewModelScope.launch {
+        var lastElapsedSecond = -1
+        while (true) {
+            delay(1_000)
+            val state = uiState.value
+            if (!state.isTimerRunning) {
+                lastElapsedSecond = -1
+                continue
+            }
+            val elapsed = state.liveElapsedSeconds(currentEpochMs())
+            if (elapsed == lastElapsedSecond) continue
+            lastElapsedSecond = elapsed
+            if (elapsed % 5 == 0) persistCheckpoint()
+        }
     }
 
     private fun persistIfNeeded(
@@ -100,7 +101,7 @@ class GameViewModel(
 
     private fun shouldPersist(intent: GameIntent): Boolean = when (intent) {
         GameIntent.EndGame -> false
-        GameIntent.ShowAd, GameIntent.DismissAd, GameIntent.AppForegrounded -> false
+        GameIntent.AppForegrounded -> false
         is GameIntent.SetGameScreenVisible -> !intent.visible
         else -> true
     }

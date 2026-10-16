@@ -24,7 +24,7 @@ val CorrectGreen = Color(0xFF2E7D57)
 val ErrorRed = Color(0xFFB3261E)
 val MutedInk = Color(0xFF7A6A58)
 
-private val KubokColorScheme: ColorScheme = lightColorScheme(
+private val JuegoColorScheme: ColorScheme = lightColorScheme(
     primary = Teal,
     onPrimary = Color(0xFFFFFBF3),
     primaryContainer = TealSoft,
@@ -44,7 +44,7 @@ private val KubokColorScheme: ColorScheme = lightColorScheme(
     onError = Color(0xFFFFFBF3),
 )
 
-private val KubokTypography = Typography(
+private val JuegoTypography = Typography(
     headlineLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
@@ -72,8 +72,8 @@ private val KubokTypography = Typography(
 @Composable
 fun JuegoTheme(content: @Composable () -> Unit) {
     MaterialTheme(
-        colorScheme = KubokColorScheme,
-        typography = KubokTypography,
+        colorScheme = JuegoColorScheme,
+        typography = JuegoTypography,
         content = content,
     )
 }

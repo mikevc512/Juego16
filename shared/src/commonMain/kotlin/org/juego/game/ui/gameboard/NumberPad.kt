@@ -1,4 +1,4 @@
-package org.juego.game.ui
+package org.juego.game.ui.gameboard
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -23,6 +23,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.juego.game.game.CELL_COUNT
+import org.juego.game.ui.BoardCream
+import org.juego.game.ui.GivenCell
+import org.juego.game.ui.GridLine
+import org.juego.game.ui.Ink
+import org.juego.game.ui.MutedInk
+import org.juego.game.ui.Teal
+import org.juego.game.ui.TealSoft
 
 @Composable
 fun NumberPad(

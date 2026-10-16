@@ -3,8 +3,6 @@ package org.juego.game.ui.gameboard
 import androidx.compose.runtime.Composable
 import org.juego.game.game.Difficulty
 import org.juego.game.presentation.GameIntent
-import org.juego.game.ui.ActionRow
-import org.juego.game.ui.NumberPad
 
 @Composable
 fun GameControls(

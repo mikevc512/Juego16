@@ -10,15 +10,12 @@ sealed interface GameIntent {
     data object Reset : GameIntent
     data object Check : GameIntent
     data class NewGame(val difficulty: Difficulty) : GameIntent
-    data object ShowAd : GameIntent
-    data object DismissAd : GameIntent
     data object DismissResultDialog : GameIntent
     data object DismissSuccessDialog : GameIntent
     data object Pause : GameIntent
     data object EndGame : GameIntent
     data object Resume : GameIntent
     data object ShowGameSelector : GameIntent
-    data object PersistGame : GameIntent
     data object AppBackgrounded : GameIntent
     data object AppForegrounded : GameIntent
     data class SetGameScreenVisible(val visible: Boolean) : GameIntent

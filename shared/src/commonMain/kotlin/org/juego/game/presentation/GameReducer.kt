@@ -2,7 +2,6 @@ package org.juego.game.presentation
 
 import org.juego.game.game.GameState
 import org.juego.game.game.PuzzleGenerator
-import org.juego.game.presentation.GameIntent.PersistGame
 
 fun reduce(
     state: GameUiState,
@@ -35,8 +34,6 @@ fun reduce(
         showSelectDifficulty = false
     )
     is GameIntent.EndGame -> state.copy(showSelectDifficulty = true)
-    GameIntent.ShowAd -> state.copy(showAd = true)
-    GameIntent.DismissAd -> state.copy(showAd = false)
     GameIntent.Pause -> state.copy(isPaused = true)
     GameIntent.ShowGameSelector -> state.copy(showSelectDifficulty = true)
     GameIntent.Resume -> state.copy(isPaused = false)
@@ -46,7 +43,6 @@ fun reduce(
     GameIntent.DismissSuccessDialog -> {
         state.copy(hasShownSuccessDialog = true)
     }
-    PersistGame -> state
     GameIntent.AppBackgrounded -> state.copy(isForeground = false)
     GameIntent.AppForegrounded -> state.copy(isForeground = true)
     is GameIntent.SetGameScreenVisible -> state.copy(isGameScreenVisible = intent.visible)

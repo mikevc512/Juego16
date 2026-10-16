@@ -7,7 +7,6 @@ data class GameUiState(
     val elapsedSeconds: Int = 0,
     val runningSinceEpochMs: Long? = null,
     val isResultDialogDismissed: Boolean = false,
-    val showAd: Boolean = false,
     val isPaused: Boolean = false,
     val showSelectDifficulty: Boolean = false,
     val isForeground: Boolean = true,

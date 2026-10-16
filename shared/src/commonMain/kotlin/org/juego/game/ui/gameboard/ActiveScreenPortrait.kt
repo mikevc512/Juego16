@@ -16,9 +16,6 @@ import androidx.compose.ui.unit.dp
 import org.juego.game.game.GameState
 import org.juego.game.presentation.GameIntent
 import org.juego.game.presentation.GameUiState
-import org.juego.game.ui.ActionRow
-import org.juego.game.ui.GameHeader
-import org.juego.game.ui.NumberPad
 
 @Composable
 fun ActiveScreenPortrait(

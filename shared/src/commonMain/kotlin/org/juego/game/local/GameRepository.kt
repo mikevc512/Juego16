@@ -22,7 +22,7 @@ class GameRepository(
     private val mutex = Mutex()
 
     fun observeStats(): Flow<UserStats> =
-        completedGameDao.observeAll().map(GamePersistenceMapper::toUserStats).flowOn(ioDispatcher)
+        completedGameDao.observeCompletedGames().map(GamePersistenceMapper::toUserStats).flowOn(ioDispatcher)
 
     fun observeSavedGame(): Flow<SavedGameSummary?> =
         savedGameDao.observe().map { entity ->

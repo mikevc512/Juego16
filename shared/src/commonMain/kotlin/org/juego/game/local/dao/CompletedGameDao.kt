@@ -12,7 +12,7 @@ interface CompletedGameDao {
     suspend fun insert(game: CompletedGameEntity)
 
     @Query("SELECT * FROM completed_games ORDER BY completedAtEpochMs DESC")
-    fun observeAll(): Flow<List<CompletedGameEntity>>
+    fun observeCompletedGames(): Flow<List<CompletedGameEntity>>
 
     @Query("SELECT * FROM completed_games ORDER BY completedAtEpochMs DESC")
     suspend fun getAll(): List<CompletedGameEntity>

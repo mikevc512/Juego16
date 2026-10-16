@@ -1,4 +1,4 @@
-package org.juego.game.ui
+package org.juego.game.ui.gameboard
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +25,7 @@ import org.juego.game.local.currentEpochMs
 import org.juego.game.presentation.elapsedSecondsAt
 import org.juego.game.ui.dialog.formatTime
 import org.jetbrains.compose.resources.stringResource
+import org.juego.game.ui.localizedName
 
 @Composable
 fun GameHeader(

@@ -1,4 +1,4 @@
-package org.juego.game.ui
+package org.juego.game.ui.gameboard
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

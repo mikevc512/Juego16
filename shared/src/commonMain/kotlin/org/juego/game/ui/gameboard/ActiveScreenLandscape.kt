@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import org.juego.game.game.GameState
 import org.juego.game.presentation.GameIntent
 import org.juego.game.presentation.GameUiState
-import org.juego.game.ui.GameHeader
 
 @Composable
 fun ActiveScreenLandscape(
